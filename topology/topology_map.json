@@ -1,0 +1,432 @@
+{
+  "meta": {
+    "description": "Abilene backbone (SNDlib) mapped to a Mininet network",
+    "bw_scale": 0.01,
+    "delay_scale": 1.0,
+    "subnet": "10.0.0.0/24",
+    "openflow_version": "OpenFlow13",
+    "controller_ip": "127.0.0.1",
+    "controller_port": 6653,
+    "host_port_on_switch": 1
+  },
+  "switches": [
+    {
+      "name": "s1",
+      "dpid": 1,
+      "dpid_hex": "0000000000000001",
+      "node_id": "ATLAM5",
+      "longitude": -84.3833,
+      "latitude": 33.75,
+      "host": "h1"
+    },
+    {
+      "name": "s2",
+      "dpid": 2,
+      "dpid_hex": "0000000000000002",
+      "node_id": "ATLAng",
+      "longitude": -85.5,
+      "latitude": 34.5,
+      "host": "h2"
+    },
+    {
+      "name": "s3",
+      "dpid": 3,
+      "dpid_hex": "0000000000000003",
+      "node_id": "CHINng",
+      "longitude": -87.6167,
+      "latitude": 41.8333,
+      "host": "h3"
+    },
+    {
+      "name": "s4",
+      "dpid": 4,
+      "dpid_hex": "0000000000000004",
+      "node_id": "DNVRng",
+      "longitude": -105.0,
+      "latitude": 40.75,
+      "host": "h4"
+    },
+    {
+      "name": "s5",
+      "dpid": 5,
+      "dpid_hex": "0000000000000005",
+      "node_id": "HSTNng",
+      "longitude": -95.517364,
+      "latitude": 29.770031,
+      "host": "h5"
+    },
+    {
+      "name": "s6",
+      "dpid": 6,
+      "dpid_hex": "0000000000000006",
+      "node_id": "IPLSng",
+      "longitude": -86.159535,
+      "latitude": 39.780622,
+      "host": "h6"
+    },
+    {
+      "name": "s7",
+      "dpid": 7,
+      "dpid_hex": "0000000000000007",
+      "node_id": "KSCYng",
+      "longitude": -96.596704,
+      "latitude": 38.961694,
+      "host": "h7"
+    },
+    {
+      "name": "s8",
+      "dpid": 8,
+      "dpid_hex": "0000000000000008",
+      "node_id": "LOSAng",
+      "longitude": -118.25,
+      "latitude": 34.05,
+      "host": "h8"
+    },
+    {
+      "name": "s9",
+      "dpid": 9,
+      "dpid_hex": "0000000000000009",
+      "node_id": "NYCMng",
+      "longitude": -73.9667,
+      "latitude": 40.7833,
+      "host": "h9"
+    },
+    {
+      "name": "s10",
+      "dpid": 10,
+      "dpid_hex": "000000000000000a",
+      "node_id": "SNVAng",
+      "longitude": -122.02553,
+      "latitude": 37.38575,
+      "host": "h10"
+    },
+    {
+      "name": "s11",
+      "dpid": 11,
+      "dpid_hex": "000000000000000b",
+      "node_id": "STTLng",
+      "longitude": -122.3,
+      "latitude": 47.6,
+      "host": "h11"
+    },
+    {
+      "name": "s12",
+      "dpid": 12,
+      "dpid_hex": "000000000000000c",
+      "node_id": "WASHng",
+      "longitude": -77.026842,
+      "latitude": 38.897303,
+      "host": "h12"
+    }
+  ],
+  "hosts": [
+    {
+      "name": "h1",
+      "ip": "10.0.0.1",
+      "ip_cidr": "10.0.0.1/24",
+      "mac": "00:00:00:00:00:01",
+      "switch": "s1",
+      "switch_port": 1
+    },
+    {
+      "name": "h2",
+      "ip": "10.0.0.2",
+      "ip_cidr": "10.0.0.2/24",
+      "mac": "00:00:00:00:00:02",
+      "switch": "s2",
+      "switch_port": 1
+    },
+    {
+      "name": "h3",
+      "ip": "10.0.0.3",
+      "ip_cidr": "10.0.0.3/24",
+      "mac": "00:00:00:00:00:03",
+      "switch": "s3",
+      "switch_port": 1
+    },
+    {
+      "name": "h4",
+      "ip": "10.0.0.4",
+      "ip_cidr": "10.0.0.4/24",
+      "mac": "00:00:00:00:00:04",
+      "switch": "s4",
+      "switch_port": 1
+    },
+    {
+      "name": "h5",
+      "ip": "10.0.0.5",
+      "ip_cidr": "10.0.0.5/24",
+      "mac": "00:00:00:00:00:05",
+      "switch": "s5",
+      "switch_port": 1
+    },
+    {
+      "name": "h6",
+      "ip": "10.0.0.6",
+      "ip_cidr": "10.0.0.6/24",
+      "mac": "00:00:00:00:00:06",
+      "switch": "s6",
+      "switch_port": 1
+    },
+    {
+      "name": "h7",
+      "ip": "10.0.0.7",
+      "ip_cidr": "10.0.0.7/24",
+      "mac": "00:00:00:00:00:07",
+      "switch": "s7",
+      "switch_port": 1
+    },
+    {
+      "name": "h8",
+      "ip": "10.0.0.8",
+      "ip_cidr": "10.0.0.8/24",
+      "mac": "00:00:00:00:00:08",
+      "switch": "s8",
+      "switch_port": 1
+    },
+    {
+      "name": "h9",
+      "ip": "10.0.0.9",
+      "ip_cidr": "10.0.0.9/24",
+      "mac": "00:00:00:00:00:09",
+      "switch": "s9",
+      "switch_port": 1
+    },
+    {
+      "name": "h10",
+      "ip": "10.0.0.10",
+      "ip_cidr": "10.0.0.10/24",
+      "mac": "00:00:00:00:00:0a",
+      "switch": "s10",
+      "switch_port": 1
+    },
+    {
+      "name": "h11",
+      "ip": "10.0.0.11",
+      "ip_cidr": "10.0.0.11/24",
+      "mac": "00:00:00:00:00:0b",
+      "switch": "s11",
+      "switch_port": 1
+    },
+    {
+      "name": "h12",
+      "ip": "10.0.0.12",
+      "ip_cidr": "10.0.0.12/24",
+      "mac": "00:00:00:00:00:0c",
+      "switch": "s12",
+      "switch_port": 1
+    }
+  ],
+  "links": [
+    {
+      "link_id": "ATLAM5_ATLAng",
+      "src_node": "ATLAng",
+      "dst_node": "ATLAM5",
+      "src_switch": "s2",
+      "dst_switch": "s1",
+      "src_port": 2,
+      "dst_port": 2,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 0.6623,
+      "delay_ms": 0.662,
+      "distance_km": 132.36
+    },
+    {
+      "link_id": "ATLAng_HSTNng",
+      "src_node": "HSTNng",
+      "dst_node": "ATLAng",
+      "src_switch": "s5",
+      "dst_switch": "s2",
+      "src_port": 2,
+      "dst_port": 3,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 5.3995,
+      "delay_ms": 5.399,
+      "distance_km": 1079.15
+    },
+    {
+      "link_id": "ATLAng_IPLSng",
+      "src_node": "IPLSng",
+      "dst_node": "ATLAng",
+      "src_switch": "s6",
+      "dst_switch": "s2",
+      "src_port": 2,
+      "dst_port": 4,
+      "bandwidth_real_mbps": 2480.0,
+      "bandwidth_emulated_mbps": 24.8,
+      "delay_real_ms": 2.9524,
+      "delay_ms": 2.952,
+      "distance_km": 590.08
+    },
+    {
+      "link_id": "ATLAng_WASHng",
+      "src_node": "WASHng",
+      "dst_node": "ATLAng",
+      "src_switch": "s12",
+      "dst_switch": "s2",
+      "src_port": 2,
+      "dst_port": 5,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 4.4993,
+      "delay_ms": 4.499,
+      "distance_km": 899.24
+    },
+    {
+      "link_id": "CHINng_IPLSng",
+      "src_node": "IPLSng",
+      "dst_node": "CHINng",
+      "src_switch": "s6",
+      "dst_switch": "s3",
+      "src_port": 3,
+      "dst_port": 2,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 1.2964,
+      "delay_ms": 1.296,
+      "distance_km": 259.1
+    },
+    {
+      "link_id": "CHINng_NYCMng",
+      "src_node": "NYCMng",
+      "dst_node": "CHINng",
+      "src_switch": "s9",
+      "dst_switch": "s3",
+      "src_port": 2,
+      "dst_port": 3,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 5.7283,
+      "delay_ms": 5.728,
+      "distance_km": 1144.87
+    },
+    {
+      "link_id": "DNVRng_KSCYng",
+      "src_node": "KSCYng",
+      "dst_node": "DNVRng",
+      "src_switch": "s7",
+      "dst_switch": "s4",
+      "src_port": 2,
+      "dst_port": 2,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 3.7226,
+      "delay_ms": 3.723,
+      "distance_km": 744.01
+    },
+    {
+      "link_id": "DNVRng_SNVAng",
+      "src_node": "SNVAng",
+      "dst_node": "DNVRng",
+      "src_switch": "s10",
+      "dst_switch": "s4",
+      "src_port": 2,
+      "dst_port": 3,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 7.5752,
+      "delay_ms": 7.575,
+      "distance_km": 1514.0
+    },
+    {
+      "link_id": "DNVRng_STTLng",
+      "src_node": "STTLng",
+      "dst_node": "DNVRng",
+      "src_switch": "s11",
+      "dst_switch": "s4",
+      "src_port": 2,
+      "dst_port": 4,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 7.8603,
+      "delay_ms": 7.86,
+      "distance_km": 1570.97
+    },
+    {
+      "link_id": "HSTNng_KSCYng",
+      "src_node": "KSCYng",
+      "dst_node": "HSTNng",
+      "src_switch": "s7",
+      "dst_switch": "s5",
+      "src_port": 3,
+      "dst_port": 3,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 5.1377,
+      "delay_ms": 5.138,
+      "distance_km": 1026.83
+    },
+    {
+      "link_id": "HSTNng_LOSAng",
+      "src_node": "LOSAng",
+      "dst_node": "HSTNng",
+      "src_switch": "s8",
+      "dst_switch": "s5",
+      "src_port": 2,
+      "dst_port": 4,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 10.9724,
+      "delay_ms": 10.972,
+      "distance_km": 2192.96
+    },
+    {
+      "link_id": "IPLSng_KSCYng",
+      "src_node": "KSCYng",
+      "dst_node": "IPLSng",
+      "src_switch": "s7",
+      "dst_switch": "s6",
+      "src_port": 4,
+      "dst_port": 4,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 4.5094,
+      "delay_ms": 4.509,
+      "distance_km": 901.26
+    },
+    {
+      "link_id": "LOSAng_SNVAng",
+      "src_node": "SNVAng",
+      "dst_node": "LOSAng",
+      "src_switch": "s10",
+      "dst_switch": "s8",
+      "src_port": 3,
+      "dst_port": 3,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 2.52,
+      "delay_ms": 2.52,
+      "distance_km": 503.65
+    },
+    {
+      "link_id": "NYCMng_WASHng",
+      "src_node": "WASHng",
+      "dst_node": "NYCMng",
+      "src_switch": "s12",
+      "dst_switch": "s9",
+      "src_port": 3,
+      "dst_port": 3,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 1.6761,
+      "delay_ms": 1.676,
+      "distance_km": 334.99
+    },
+    {
+      "link_id": "SNVAng_STTLng",
+      "src_node": "STTLng",
+      "dst_node": "SNVAng",
+      "src_switch": "s11",
+      "dst_switch": "s10",
+      "src_port": 3,
+      "dst_port": 4,
+      "bandwidth_real_mbps": 9920.0,
+      "bandwidth_emulated_mbps": 99.2,
+      "delay_real_ms": 5.6839,
+      "delay_ms": 5.684,
+      "distance_km": 1135.99
+    }
+  ]
+}
