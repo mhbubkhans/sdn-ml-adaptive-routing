@@ -1,0 +1,13 @@
+test,pair,link,state,path,measured_rtt_ms,expected_rtt_ms,reroute_outage_ms
+reference,h5-h8,,normal,HSTNng > LOSAng,22.19,21.94,
+reference,h12-h8,,normal,WASHng > ATLAng > HSTNng > LOSAng,42.61,41.74,
+reference,h9-h8,,normal,NYCMng > WASHng > ATLAng > HSTNng > LOSAng,45.80,45.09,
+reference,h3-h10,,normal,CHINng > IPLSng > KSCYng > DNVRng > SNVAng,35.10,34.21,
+reference,h1-h10,,normal,ATLAM5 > ATLAng > IPLSng > KSCYng > DNVRng > SNVAng,39.67,38.84,
+reference,h11-h9,,normal,STTLng > DNVRng > KSCYng > IPLSng > CHINng > NYCMng,47.38,46.23,
+failure,h5-h8,HSTNng_LOSAng,link_down,HSTNng > KSCYng > DNVRng > SNVAng > LOSAng,38.93,37.91,100
+failure,h5-h8,HSTNng_LOSAng,link_restored,HSTNng > LOSAng,23.09,21.94,0
+failure,h9-h8,ATLAng_WASHng,link_down,NYCMng > CHINng > IPLSng > KSCYng > DNVRng > SNVAng > LOSAng,57.46,50.70,150
+failure,h9-h8,ATLAng_WASHng,link_restored,NYCMng > WASHng > ATLAng > HSTNng > LOSAng,49.19,45.09,0
+failure,h3-h10,IPLSng_KSCYng,link_down,CHINng > IPLSng > ATLAng > HSTNng > LOSAng > SNVAng,51.69,46.28,150
+failure,h3-h10,IPLSng_KSCYng,link_restored,CHINng > IPLSng > KSCYng > DNVRng > SNVAng,39.29,34.21,0
