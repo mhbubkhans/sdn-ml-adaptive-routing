@@ -1,0 +1,87 @@
+{
+  "horizon_steps": 3,
+  "horizon_minutes": 15,
+  "use_time_features": true,
+  "target_mode": "delta",
+  "train_frac": 0.7,
+  "n_train": 8940,
+  "n_test": 3855,
+  "test_starts": "2004-04-08 02:20:00",
+  "best_model": "random_forest",
+  "best_params": {
+    "max_depth": 10,
+    "min_samples_leaf": 10,
+    "n_estimators": 150
+  },
+  "cv_rmse": {
+    "ridge": 0.5651516648432979,
+    "decision_tree": 0.5548140334449346,
+    "random_forest": 0.5445543343306974,
+    "hist_gb": 0.56272395872628
+  },
+  "test": {
+    "persistence": {
+      "rmse": 12.165351751549508,
+      "mae": 1.9162373800259405,
+      "r2": 0.544695904374621,
+      "rmse_high_load": 42.663265362652446,
+      "n_high_load": 300,
+      "cong_precision": 0.5675675675675675,
+      "cong_recall": 0.5675675675675675,
+      "cong_f1": 0.5675675675675675
+    },
+    "moving_avg_3": {
+      "rmse": 12.319168975102189,
+      "mae": 1.9717759014267187,
+      "r2": 0.5331094970888743,
+      "rmse_high_load": 43.12606086974776,
+      "n_high_load": 300,
+      "cong_precision": 0.569620253164557,
+      "cong_recall": 0.6081081081081081,
+      "cong_f1": 0.5882352941176471
+    },
+    "ridge": {
+      "rmse": 12.357134138120243,
+      "mae": 2.0336392720630023,
+      "r2": 0.5302273404449996,
+      "rmse_high_load": 43.155871409892086,
+      "n_high_load": 300,
+      "cong_precision": 0.5466666666666666,
+      "cong_recall": 0.5540540540540541,
+      "cong_f1": 0.5503355704697985
+    },
+    "decision_tree": {
+      "rmse": 12.138504121495915,
+      "mae": 1.8798262701852784,
+      "r2": 0.5467033017473275,
+      "rmse_high_load": 42.62393923366014,
+      "n_high_load": 300,
+      "cong_precision": 0.5675675675675675,
+      "cong_recall": 0.5675675675675675,
+      "cong_f1": 0.5675675675675675
+    },
+    "random_forest": {
+      "rmse": 12.136292313758753,
+      "mae": 1.866745922795831,
+      "r2": 0.5468684808814197,
+      "rmse_high_load": 42.5958046010439,
+      "n_high_load": 300,
+      "cong_precision": 0.5657894736842105,
+      "cong_recall": 0.581081081081081,
+      "cong_f1": 0.5733333333333333
+    },
+    "hist_gb": {
+      "rmse": 12.131434731818569,
+      "mae": 1.8673691382995865,
+      "r2": 0.5472311423803786,
+      "rmse_high_load": 42.587057354643456,
+      "n_high_load": 300,
+      "cong_precision": 0.5675675675675675,
+      "cong_recall": 0.5675675675675675,
+      "cong_f1": 0.5675675675675675
+    }
+  },
+  "improvement_vs_persistence_pct": 0.23887051015235633,
+  "congestion_threshold": 50.0,
+  "focus_link": "ATLAng_IPLSng"
+}
