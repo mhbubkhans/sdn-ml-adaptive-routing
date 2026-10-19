@@ -1,0 +1,4 @@
+scenario,policy,mean_rtt_ms,p95_rtt_ms,max_rtt_ms,control_rtt_ms,loss_pct,path_changes,throughput_mbps,reroute_outage_ms
+throughput,static,34.67,49.21,49.97,13.36,0.00,0,53.07,
+throughput,reactive,32.85,46.61,53.69,12.90,0.00,0,54.05,
+throughput,forecast,33.10,47.00,48.08,13.26,0.00,0,56.44,

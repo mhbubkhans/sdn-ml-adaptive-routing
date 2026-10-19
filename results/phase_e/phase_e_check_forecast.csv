@@ -1,0 +1,33 @@
+scenario,policy,step,timestamp,pair,path,rtt_ms,loss_pct,tput_mbps,hot_util,hot_forecast,rules_changed_step,links_down
+check,forecast,0,20040408-0220,h2-h6,ATLAng > IPLSng,10.04,0,,27.2,27.0,12,
+check,forecast,0,20040408-0220,h1-h10,ATLAM5 > ATLAng > HSTNng > LOSAng > SNVAng,43.48,0,,27.2,27.0,12,
+check,forecast,0,20040408-0220,h12-h8,WASHng > ATLAng > HSTNng > LOSAng,47.06,0,,27.2,27.0,12,
+check,forecast,0,20040408-0220,h3-h9,CHINng > NYCMng,13.46,0,,27.2,27.0,12,
+check,forecast,1,20040408-0225,h2-h6,ATLAng > IPLSng,8.72,0,,24.2,24.8,0,
+check,forecast,1,20040408-0225,h1-h10,ATLAM5 > ATLAng > HSTNng > LOSAng > SNVAng,42.07,0,,24.2,24.8,0,
+check,forecast,1,20040408-0225,h12-h8,WASHng > ATLAng > HSTNng > LOSAng,46.51,0,,24.2,24.8,0,
+check,forecast,1,20040408-0225,h3-h9,CHINng > NYCMng,12.23,0,,24.2,24.8,0,
+check,forecast,2,20040408-0230,h2-h6,ATLAng > IPLSng,12.92,0,,25.0,25.5,0,
+check,forecast,2,20040408-0230,h1-h10,ATLAM5 > ATLAng > HSTNng > LOSAng > SNVAng,41.76,0,,25.0,25.5,0,
+check,forecast,2,20040408-0230,h12-h8,WASHng > ATLAng > HSTNng > LOSAng,48.60,0,,25.0,25.5,0,
+check,forecast,2,20040408-0230,h3-h9,CHINng > NYCMng,12.82,0,,25.0,25.5,0,
+check,forecast,3,20040408-0235,h2-h6,ATLAng > IPLSng,8.08,0,,24.1,24.3,5,
+check,forecast,3,20040408-0235,h1-h10,ATLAM5 > ATLAng > HSTNng > LOSAng > SNVAng,41.75,0,,24.1,24.3,5,
+check,forecast,3,20040408-0235,h12-h8,WASHng > ATLAng > HSTNng > LOSAng,44.54,0,,24.1,24.3,5,
+check,forecast,3,20040408-0235,h3-h9,CHINng > NYCMng,12.31,0,,24.1,24.3,5,
+check,forecast,4,20040408-0240,h2-h6,ATLAng > IPLSng,9.01,0,,26.2,26.3,8,ATLAng_HSTNng
+check,forecast,4,20040408-0240,h1-h10,ATLAM5 > ATLAng > IPLSng > KSCYng > DNVRng > SNVAng,48.37,0,,26.2,26.3,8,ATLAng_HSTNng
+check,forecast,4,20040408-0240,h12-h8,WASHng > NYCMng > CHINng > IPLSng > KSCYng > DNVRng > SNVAng > LOSAng,63.55,0,,26.2,26.3,8,ATLAng_HSTNng
+check,forecast,4,20040408-0240,h3-h9,CHINng > NYCMng,12.97,0,,26.2,26.3,8,ATLAng_HSTNng
+check,forecast,5,20040408-0245,h2-h6,ATLAng > IPLSng,9.06,0,,27.1,26.5,0,ATLAng_HSTNng
+check,forecast,5,20040408-0245,h1-h10,ATLAM5 > ATLAng > IPLSng > KSCYng > DNVRng > SNVAng,46.58,0,,27.1,26.5,0,ATLAng_HSTNng
+check,forecast,5,20040408-0245,h12-h8,WASHng > NYCMng > CHINng > IPLSng > KSCYng > DNVRng > SNVAng > LOSAng,62.77,0,,27.1,26.5,0,ATLAng_HSTNng
+check,forecast,5,20040408-0245,h3-h9,CHINng > NYCMng,12.72,0,,27.1,26.5,0,ATLAng_HSTNng
+check,forecast,6,20040408-0250,h2-h6,ATLAng > IPLSng,9.10,0,,26.9,26.4,0,ATLAng_HSTNng
+check,forecast,6,20040408-0250,h1-h10,ATLAM5 > ATLAng > IPLSng > KSCYng > DNVRng > SNVAng,46.07,0,,26.9,26.4,0,ATLAng_HSTNng
+check,forecast,6,20040408-0250,h12-h8,WASHng > NYCMng > CHINng > IPLSng > KSCYng > DNVRng > SNVAng > LOSAng,63.84,0,,26.9,26.4,0,ATLAng_HSTNng
+check,forecast,6,20040408-0250,h3-h9,CHINng > NYCMng,12.97,0,,26.9,26.4,0,ATLAng_HSTNng
+check,forecast,7,20040408-0255,h2-h6,ATLAng > IPLSng,9.09,0,,25.7,25.6,0,
+check,forecast,7,20040408-0255,h1-h10,ATLAM5 > ATLAng > HSTNng > LOSAng > SNVAng,45.26,0,,25.7,25.6,0,
+check,forecast,7,20040408-0255,h12-h8,WASHng > ATLAng > HSTNng > LOSAng,47.18,0,,25.7,25.6,0,
+check,forecast,7,20040408-0255,h3-h9,CHINng > NYCMng,12.99,0,,25.7,25.6,0,

@@ -1,0 +1,3 @@
+scenario,policy,event,link,step,timestamp,pair,lost_pings,outage_ms,recovered
+check,forecast,link_down,ATLAng_HSTNng,3,20040408-0235,h12-h8,5,250,True
+check,forecast,link_up,ATLAng_HSTNng,6,20040408-0250,h12-h8,0,0,True
