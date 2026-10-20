@@ -1,0 +1,245 @@
+\<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abilene ML Routing - Live Dashboard</title>
+<style>
+:root{--bg:#0b1220;--panel:#16213a;--line:#25324f;--ink:#e6edf7;--mute:#8fa1bf;--acc:#38bdf8;--ok:#22c55e;--bad:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,"Segoe UI",Arial,sans-serif;
+ display:grid;grid-template-columns:1fr 400px;grid-template-rows:auto 1fr;height:100vh}
+header{grid-column:1/3;display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
+header h1{font-size:18px;margin:0;flex:1}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--mute);display:inline-block;margin:2px}
+.chip b{color:var(--ink)}
+main{padding:8px;min-height:0}
+#map{width:100%;height:100%;background:#0e1830;border:1px solid var(--line);border-radius:10px}
+aside{padding:8px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
+.card h2{margin:0 0 6px;font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+td,th{padding:2px 4px;text-align:right}td:first-child,th:first-child{text-align:left}
+.ev{font-size:12.5px;margin:2px 0}.warn{color:#fbbf24}.bad{color:var(--bad)}.ok{color:var(--ok)}.info{color:var(--acc)}
+button,select{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 9px;cursor:pointer}
+button.on{border-color:var(--acc);color:var(--acc)}
+#raw{display:none;white-space:pre-wrap;font-size:11px;max-height:220px;overflow:auto}
+</style></head>
+<body>
+<header>
+ <h1>AI-driven adaptive routing &ndash; Abilene (live)</h1>
+ <span class="chip">policy <b id="k-policy">-</b></span>
+ <span class="chip">step <b id="k-step">-</b></span>
+ <span class="chip">rules changed <b id="k-chg">-</b></span>
+ <span class="chip">links down <b id="k-down">0</b></span>
+ <span class="chip" id="k-status">connecting...</span>
+</header>
+<main><svg id="map" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg></main>
+<aside>
+ <div class="card"><h2>Colour links by (keys 1 / 2 / 3)</h2>
+  <button data-m="util" class="on">Utilisation now</button>
+  <button data-m="fc">ML forecast</button>
+  <button data-m="live">Live traffic</button>
+  <div style="margin-top:6px;color:var(--mute);font-size:12px">green &rarr; red = 0 &rarr; 100 %. Grey dashed = link down.</div></div>
+ <div class="card"><h2>Packets (key P)</h2>
+  <button id="pk-btn" class="on">Animation ON</button>
+  <div style="margin-top:6px;color:var(--mute);font-size:12px">Dots follow real per-link packet rates from kernel counters. White = forward, amber = reverse. Dot density scales with packets/s; travel time is slowed for visibility.</div></div>
+ <div class="card"><h2>Watched path <select id="pair"></select></h2><div id="path">-</div></div>
+ <div class="card"><h2>Busiest links</h2><table id="tbl"></table></div>
+ <div class="card"><h2 id="chart-title">Focus link</h2><svg id="chart" viewBox="0 0 360 120" width="100%"></svg></div>
+ <div class="card"><h2>Events</h2><div id="events"></div></div>
+ <div class="card"><h2>Controller state (press D for raw)</h2><div id="chips"></div><pre id="raw"></pre></div>
+</aside>
+<script>
+/* ===== EDIT HERE if your live_state.json uses other key names (see guide U2/U4) ===== */
+const CFG = {
+  util:  ['util','utilization','util_now'],     // {link_id: percent}
+  fc:    ['forecast','pred','predicted'],       // {link_id: percent}
+  paths: ['paths','watched_paths'],             // {"h2-h6": [...] or "A > B > C"}
+  step:  ['step'], total: ['steps','n_steps','total_steps'],
+  policy:['policy'], chg: ['rules_changed_step','rules_changed','changed','n_changed'],
+  focus: 'ATLAng_IPLSng',                       // link shown in the chart
+  poll: 1000
+};
+/* ================================================================================== */
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const pick=(o,ks)=>{if(!o)return undefined;for(const k of ks)if(k in o)return o[k];};
+const el=(tag,at,par)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e;};
+let topo,nodes={},byNode={},linkEl={},mode='util',hist={u:[],f:[]},prev={paths:{},up:null},
+    lastStep=null,events=[],alerted=false,selPair=null;
+
+const colour=p=>{if(p==null||isNaN(p))return '#64748b';const x=Math.max(0,Math.min(100,p));return 'hsl('+(120-1.2*x)+',80%,50%)';};
+const short=n=>n.replace(/ng$/,'');
+function log(msg,cls){events.unshift('<div class="ev '+cls+'">'+new Date().toLocaleTimeString()+' &middot; '+msg+'</div>');
+  events=events.slice(0,14);$('events').innerHTML=events.join('');}
+
+function toSwitches(p){
+  if(!p)return [];
+  if(p.path)p=p.path;
+  const a=Array.isArray(p)?p:String(p).split(/\s*(?:->|&gt;|>|,)\s*/);
+  return a.map(t=>{t=String(t).trim();
+    if(nodes[t])return t; if(byNode[t])return byNode[t]; if(byNode[t+'ng'])return byNode[t+'ng']; return null;}).filter(Boolean);
+}
+const pathText=sw=>sw.map(s=>short(nodes[s].node)).join(' \u2192 ');
+
+function layout(){
+  const W=900,H=520,P=70,sw=topo.switches,k=Math.cos(38*Math.PI/180);
+  const lons=sw.map(s=>s.longitude),lats=sw.map(s=>s.latitude);
+  const minX=Math.min(...lons),maxX=Math.max(...lons),minY=Math.min(...lats),maxY=Math.max(...lats);
+  const s=Math.min((W-2*P)/(((maxX-minX)*k)||1),(H-2*P)/((maxY-minY)||1));
+  const ox=(W-(maxX-minX)*k*s)/2,oy=(H-(maxY-minY)*s)/2;
+  sw.forEach(o=>{nodes[o.name]={name:o.name,node:o.node_id,x:ox+(o.longitude-minX)*k*s,y:oy+(maxY-o.latitude)*s};byNode[o.node_id]=o.name;});
+  const arr=Object.values(nodes);   // two Atlanta routers sit on top of each other: nudge
+  for(let i=0;i<arr.length;i++)for(let j=0;j<i;j++)
+    if(Math.hypot(arr[i].x-arr[j].x,arr[i].y-arr[j].y)<30){arr[i].x+=28;arr[i].y+=32;}
+}
+function draw(){
+  const g=$('map');
+  topo.links.forEach(l=>{
+    const a=nodes[l.src_switch],b=nodes[l.dst_switch];
+    const ln=el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-linecap':'round','stroke-width':2+l.bandwidth_emulated_mbps/40},g);
+    el('title',{},ln).textContent=l.link_id+' | '+l.bandwidth_emulated_mbps+' Mbps | '+l.delay_ms+' ms';
+    linkEl[l.link_id]=ln;
+  });
+  el('g',{id:'hl'},g);
+  el('g',{id:'pk'},g);
+  Object.values(nodes).forEach(n=>{
+    el('circle',{cx:n.x,cy:n.y,r:13,fill:'#0b1220',stroke:'#38bdf8','stroke-width':2},g);
+    el('text',{x:n.x,y:n.y+4,'text-anchor':'middle',fill:'#e6edf7','font-size':10,'font-weight':600},g).textContent=n.name;
+    el('text',{x:n.x,y:n.y-19,'text-anchor':'middle',fill:'#8fa1bf','font-size':11},g).textContent=short(n.node);
+  });
+}
+function highlight(sw){
+  const hl=$('hl');hl.innerHTML='';
+  for(let i=0;i+1<sw.length;i++){
+    const a=nodes[sw[i]],b=nodes[sw[i+1]];
+    el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#38bdf8','stroke-width':9,opacity:.45,'stroke-linecap':'round'},hl);
+  }
+}
+function drawChart(){
+  const c=$('chart');c.innerHTML='';
+  const n=hist.u.length;if(n<1)return;
+  const ymax=Math.max(100,...hist.u.filter(x=>x!=null),...hist.f.filter(x=>x!=null));
+  const X=i=>30+i*(320/Math.max(1,n-1)),Y=v=>110-(v/ymax)*100;
+  [0,50,100].forEach(v=>{if(v<=ymax){el('line',{x1:30,x2:350,y1:Y(v),y2:Y(v),stroke:'#25324f'},c);
+    el('text',{x:2,y:Y(v)+4,fill:'#8fa1bf','font-size':9},c).textContent=v+'%';}});
+  const poly=(arr,col,dash)=>el('polyline',{fill:'none',stroke:col,'stroke-width':2,'stroke-dasharray':dash,
+    points:arr.map((v,i)=>v==null?null:X(i)+','+Y(v)).filter(Boolean).join(' ')},c);
+  poly(hist.u,'#22c55e','');poly(hist.f,'#f59e0b','5 3');
+  $('chart-title').innerHTML=CFG.focus+' &nbsp;<span class="ok">&mdash; now</span> <span class="warn">- - forecast</span>';
+}
+
+async function tick(){
+  let live;
+  try{live=await (await fetch('/api/live',{cache:'no-store'})).json();}
+  catch(e){$('k-status').textContent='server unreachable';return;}
+  const st=live.state,L=live.links||{};
+  setRates(L);
+  const U=pick(st,CFG.util)||{},F=pick(st,CFG.fc)||{},P=pick(st,CFG.paths)||{};
+  $('k-status').textContent=st?'live':'waiting for controller replay...';
+  const step=pick(st,CFG.step),tot=pick(st,CFG.total);
+  $('k-policy').textContent=pick(st,CFG.policy)==null?'-':pick(st,CFG.policy);
+  $('k-step').textContent=step==null?'-':(tot?(step+1)+' / '+tot:(step+1));
+  $('k-chg').textContent=pick(st,CFG.chg)==null?'-':pick(st,CFG.chg);
+
+  // ---- links: colour, up/down events
+  let down=0;const curUp={};
+  topo.links.forEach(l=>{
+    const id=l.link_id,s=L[id]||{},isDown=!!s.present&&!s.up;
+    if(isDown)down++;curUp[id]=!isDown;
+    const v=mode==='util'?U[id]:mode==='fc'?F[id]:(s.mbps!=null?100*s.mbps/l.bandwidth_emulated_mbps:null);
+    const ln=linkEl[id];
+    ln.setAttribute('stroke',isDown?'#475569':colour(v));
+    ln.setAttribute('stroke-dasharray',isDown?'6 6':'');
+    if(prev.up&&prev.up[id]!==curUp[id])log((isDown?'LINK DOWN: ':'LINK UP: ')+id,isDown?'bad':'ok');
+  });
+  prev.up=curUp;$('k-down').textContent=down;
+
+  // ---- watched paths
+  const pairs=Object.keys(P),sel=$('pair');
+  if(sel.options.length!==pairs.length){sel.innerHTML=pairs.map(p=>'<option>'+p+'</option>').join('');if(!selPair&&pairs.length)selPair=pairs[0];}
+  if(selPair&&pairs.includes(selPair))sel.value=selPair;
+  pairs.forEach(p=>{
+    const sw=toSwitches(P[p]),key=sw.join('>');
+    if(prev.paths[p]!==undefined&&prev.paths[p]!==key&&key)
+      log('PATH CHANGED '+p+': '+pathText(toSwitches(prev.paths[p].split('>')))+' \u2192 '+pathText(sw),'info');
+    prev.paths[p]=key;
+  });
+  if(selPair&&P[selPair]){const sw=toSwitches(P[selPair]);$('path').textContent=pathText(sw)||'-';highlight(sw);}
+
+  // ---- table
+  const rows=topo.links.map(l=>({id:l.link_id,u:U[l.link_id],f:F[l.link_id],m:(L[l.link_id]||{}).mbps,d:!(curUp[l.link_id])}))
+    .sort((a,b)=>Math.max(b.u||0,b.f||0)-Math.max(a.u||0,a.f||0)).slice(0,6);
+  const f1=v=>v==null?'-':Number(v).toFixed(0);
+  $('tbl').innerHTML='<tr><th>link</th><th>now %</th><th>fcst %</th><th>Mbps</th></tr>'+
+    rows.map(r=>'<tr><td>'+r.id+(r.d?' <span class="bad">DOWN</span>':'')+'</td><td>'+f1(r.u)+'</td><td>'+f1(r.f)+'</td><td>'+(r.m==null?'-':r.m)+'</td></tr>').join('');
+
+  // ---- chart history + forecast alert (once per new step)
+  if(step!=null&&step!==lastStep){
+    if(lastStep!=null&&step<lastStep){hist={u:[],f:[]};alerted=false;log('Replay restarted','warn');}
+    lastStep=step;hist.u.push(U[CFG.focus]==null?null:U[CFG.focus]);hist.f.push(F[CFG.focus]==null?null:F[CFG.focus]);
+    if(hist.u.length>60){hist.u.shift();hist.f.shift();}
+    const f=F[CFG.focus];
+    if(f!=null&&f>=70&&!alerted){alerted=true;log('FORECAST: '+CFG.focus+' will reach '+f.toFixed(0)+' %','warn');}
+    if(f!=null&&f<50)alerted=false;
+    drawChart();
+  }
+
+  // ---- state chips + raw
+  $('chips').innerHTML=Object.entries(st||{}).filter(([k,v])=>typeof v!=='object')
+    .map(([k,v])=>'<span class="chip">'+k+' <b>'+(typeof v==='number'?+v.toFixed(2):v)+'</b></span>').join('');
+  $('raw').textContent=JSON.stringify(live,null,1);
+}
+
+/* ===== packet animation ===== */
+let anim=true,particles=[],rates={},acc={},lastFrame=performance.now();
+const MAXDOTS=120,SLOW=110;   // screen ms per real ms of link delay (plus a 350 ms base)
+function setRates(L){
+  rates={};
+  topo.links.forEach(l=>{const s=L[l.link_id]||{};
+    rates[l.link_id]={f:s.fwd_pps||0,r:s.rev_pps||0,up:!(s.present&&!s.up)};});
+}
+function frame(now){
+  const dt=now-lastFrame;lastFrame=now;
+  if(anim&&topo&&dt<200){
+    const g=$('pk');
+    for(const l of topo.links){
+      const R=rates[l.link_id];if(!R||!R.up)continue;
+      for(const d of [1,-1]){
+        const pps=d===1?R.f:R.r;
+        const dps=pps<0.3?0:Math.min(10,1+3*Math.log10(1+pps));   // dots per second
+        const k=l.link_id+d;acc[k]=(acc[k]||0)+dps*dt/1000;
+        while(acc[k]>=1&&particles.length<MAXDOTS){
+          acc[k]-=1;
+          particles.push({l:l,d:d,t:0,dur:350+l.delay_ms*SLOW,
+            el:el('circle',{r:3.5,fill:d===1?'#f8fafc':'#fcd34d'},g)});
+        }
+        if(acc[k]>=1)acc[k]=0;
+      }
+    }
+    particles=particles.filter(p=>{
+      p.t+=dt;
+      if(p.t>=p.dur){p.el.remove();return false;}
+      const a=nodes[p.l.src_switch],b=nodes[p.l.dst_switch];
+      const f=p.t/p.dur,u=p.d===1?f:1-f;
+      p.el.setAttribute('cx',a.x+(b.x-a.x)*u);p.el.setAttribute('cy',a.y+(b.y-a.y)*u);
+      return true;
+    });
+  }
+  requestAnimationFrame(frame);
+}
+function setAnim(v){
+  anim=v;$('pk-btn').textContent='Animation '+(v?'ON':'OFF');$('pk-btn').classList.toggle('on',v);
+  if(!v){particles.forEach(p=>p.el.remove());particles=[];}
+}
+$('pk-btn').onclick=()=>setAnim(!anim);
+document.addEventListener('keydown',e=>{if(e.key==='p'||e.key==='P')setAnim(!anim);});
+
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+function setMode(m){mode=m;document.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===m));tick();}
+$('pair').onchange=e=>{selPair=e.target.value;tick();};
+document.addEventListener('keydown',e=>{
+  if(e.key==='1')setMode('util');if(e.key==='2')setMode('fc');if(e.key==='3')setMode('live');
+  if(e.key==='d'||e.key==='D')$('raw').style.display=$('raw').style.display==='block'?'none':'block';
+});
+(async()=>{topo=await (await fetch('/api/topology')).json();layout();draw();setInterval(tick,CFG.poll);tick();requestAnimationFrame(frame);})();
+</script></body></html>
